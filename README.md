@@ -19,22 +19,33 @@ View Products (API: GET /products)
 Place Order (API: POST /orders)
 View My Orders (API: GET /orders/<user_id>)
 
+
+Project Outputs:
+![Screenshot 2025-05-26 190825](https://github.com/user-attachments/assets/3a1d3d16-f94c-4a99-87c0-be58402bcfdf)
+![Screenshot 2025-05-26 191016](https://github.com/user-attachments/assets/195ccbbc-f581-4211-8467-e7ca140b5c35)
+![Screenshot 2025-05-26 190914](https://github.com/user-attachments/assets/b31a2699-fc6e-40a0-956c-ab89a917dec3)
+![Screenshot 2025-05-26 190927](https://github.com/user-attachments/assets/db256d3c-e853-42b4-95ef-1a724a441970)
+![Screenshot 2025-05-26 190940](https://github.com/user-attachments/assets/4ea81ca8-d9df-4283-8fc5-68ccdbdf61d0)
+![Screenshot 2025-05-26 190848](https://github.com/user-attachments/assets/e1696fcc-f0f1-4137-b0a3-adb2c6d099a6)
+![Screenshot 2025-05-26 191029](https://github.com/user-attachments/assets/a139b376-524c-4c76-b0da-69d27991155c)
+
+
 🚀Project code:
-
-
+```python
 from flask import Flask,request,jsonify
 from flask_mysqldb import MySQL
 from datetime import datetime,timedelta 
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager,create_access_token,jwt_required,get_jwt,get_jwt_identity
 from flask_cors import CORS
-stock=Flask(__name__) 
+stock=Flask(_name_) 
 CORS(stock)
 stock.config['MYSQL_USER']="root"
 stock.config['MYSQL_PASSWORD']="Anuja@2005"
 stock.config['MYSQL_DB']="stock"
 stock.config['MYSQL_HOST']="localhost"
 mysql=MySQL(stock)
+
 @stock.route("/addproducts",methods=["POST"])
 def addproducts():
     data=request.json
@@ -45,7 +56,8 @@ def addproducts():
     cur=mysql.connection.cursor()
     cur.execute("insert into products(productname,quantity,price,status)values(%s,%s,%s,%s)",(productname,quantity,price,status))
     mysql.connection.commit()
-    return "addproducts"       
+    return "addproducts"   
+    
 @stock.route("/addcustomers",methods=["POST"])
 def addcustomers():
     data=request.json
@@ -55,6 +67,7 @@ def addcustomers():
     cur.execute("insert into customer(customername,phonenumber)values(%s,%s)",(customername,phonenumber))
     mysql.connection.commit()
     return "addcustomers"
+    
 @stock.route("/addorders", methods=["POST"])
 def addorders():
     data = request.json
@@ -83,6 +96,7 @@ def addorders():
     mysql.connection.commit()
     cur.close()
     return jsonify({"status": "success", "message": "Order added successfully"}), 200
+    
 @stock.route("/viewallproducts",methods=["GET"])
 def viewallproducts():
     cur=mysql.connection.cursor()
@@ -91,6 +105,7 @@ def viewallproducts():
     col_name=[desc[0] for desc in cur.description]
     results=[dict(zip(col_name,row))for row in rows]
     return jsonify(results)
+    
 @stock.route("/viewallcustomers",methods=["GET"])
 def viewallcustomers():
     cur=mysql.connection.cursor()
@@ -99,6 +114,7 @@ def viewallcustomers():
     col_name=[desc[0] for desc in cur.description]
     results=[dict(zip(col_name,row))for row in rows]
     return jsonify(results)
+    
 @stock.route("/viewallorders",methods=["GET"])
 def viewallorders():
     cur=mysql.connection.cursor()
@@ -107,6 +123,7 @@ def viewallorders():
     col_name=[desc[0] for desc in cur.description]
     results=[dict(zip(col_name,row))for row in rows]
     return jsonify(results)
+    
 @stock.route("/getparticularproduct/<int:id>",methods=["GET"])
 def getparticularproduct(id):
     cur=mysql.connection.cursor()
@@ -116,6 +133,7 @@ def getparticularproduct(id):
     if row:
         return jsonify(row)
     return jsonify({"error":"no record found"})
+    
 @stock.route("/getparticularcustomer/<int:id>",methods=["GET"])
 def getparticularcustomer(id):
     cur=mysql.connection.cursor()
@@ -125,6 +143,7 @@ def getparticularcustomer(id):
     if row:
         return jsonify(row)
     return jsonify({"error":"no record found"})
+    
 @stock.route("/getparticularorder/<int:id>",methods=["GET"])
 def getparticularorder(id):
     cur=mysql.connection.cursor()
@@ -134,6 +153,7 @@ def getparticularorder(id):
     if row:
         return jsonify(row)
     return jsonify({"error":"no record found"})
+    
 @stock.route("/deleteproduct/<int:id>",methods=["DELETE"])
 def deleteproduct(id):
     cur = mysql.connection.cursor()
@@ -146,6 +166,7 @@ def deleteproduct(id):
         return jsonify({"error": "product not found to delete"}), 404
     return jsonify({"message": "product and associated orders deleted successfully", "id": id}), 200
     cur.close()
+    
 @stock.route("/deletecustomer/<int:id>", methods=["DELETE"])
 def deletecustomer(id):
     cur = mysql.connection.cursor()
@@ -158,6 +179,7 @@ def deletecustomer(id):
         return jsonify({"error": "Customer not found to delete"}), 404
     return jsonify({"message": "Customer and associated orders deleted successfully", "id": id}), 200
     cur.close()
+    
 @stock.route("/deleteorder/<int:id>",methods=["DELETE"])
 def deleteorder(id):
     cur=mysql.connection.cursor()
@@ -167,6 +189,7 @@ def deleteorder(id):
     if rowcount==0:
         return jsonify({"error":"order not found to delete"})#404
     return jsonify({"message":"order deleted successfully","id":id})#200
+    
 @stock.route("/updateproduct/<int:id>",methods=["PUT"])
 def updateproduct(id):
     cur=mysql.connection.cursor()
@@ -180,6 +203,7 @@ def updateproduct(id):
     if rowcount==0:
         return jsonify({"error":"product not found to update"})#404
     return jsonify({"message":"product updated successfully","id":id})#200
+    
 @stock.route("/updatecustomer/<int:id>",methods=["PUT"])
 def updatecustomer(id):
     cur=mysql.connection.cursor()
@@ -192,6 +216,7 @@ def updatecustomer(id):
     if rowcount==0:
         return jsonify({"error":"customer not found to update"})#404
     return jsonify({"message":"customer updated successfully","id":id})#200
+    
 @stock.route("/updateorder/<int:id>",methods=["PUT"])
 def updateorder(id):
     cur=mysql.connection.cursor()
@@ -317,12 +342,12 @@ def adminlogin():
 
 
  
-if __name__=="__main__":
+if _name=="main_":
     stock.run(debug=True)
-
+``` <-- closing backticks
+ 
     
-    
-🛠️ Tech Stack
+🛠 Tech Stack
 Frontend: HTML, CSS, JavaScript
 Backend: Flask (Python web framework)
 Database: MySQL
@@ -341,16 +366,6 @@ Browses product list fetched from API.
 Places orders, which update the stock automatically.
 Can view their individual order history via user-specific endpoints.
 All data interactions occur through a structured set of APIs that ensure loose coupling between frontend and backend.
-
-Outputs
-![Screenshot 2025-05-26 190825](https://github.com/user-attachments/assets/3a1d3d16-f94c-4a99-87c0-be58402bcfdf)
-![Screenshot 2025-05-26 191016](https://github.com/user-attachments/assets/195ccbbc-f581-4211-8467-e7ca140b5c35)
-![Screenshot 2025-05-26 190914](https://github.com/user-attachments/assets/b31a2699-fc6e-40a0-956c-ab89a917dec3)
-![Screenshot 2025-05-26 190927](https://github.com/user-attachments/assets/db256d3c-e853-42b4-95ef-1a724a441970)
-![Screenshot 2025-05-26 190940](https://github.com/user-attachments/assets/4ea81ca8-d9df-4283-8fc5-68ccdbdf61d0)
-![Screenshot 2025-05-26 190848](https://github.com/user-attachments/assets/e1696fcc-f0f1-4137-b0a3-adb2c6d099a6)
-![Screenshot 2025-05-26 191029](https://github.com/user-attachments/assets/a139b376-524c-4c76-b0da-69d27991155c)
-
 
 🌐 Further Research
 Token-Based Authentication (JWT):
